@@ -1,8 +1,3 @@
-# il metodo get non permette di lasciare uno spazio vuoto
-
-from distutils.core import setup
-import py2exe
-
 from tkinter import *
 root = Tk()
 root.geometry("250x100+600+300")
