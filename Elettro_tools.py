@@ -1,7 +1,13 @@
+############ 19/05/2021 Nicola Bianco bianco.nicola@yahoo.it ############
+
 from tkinter import *
+from PIL import ImageTk, Image
+
 root = Tk()
-root.geometry("250x100+600+300")
+root.geometry("250x120+600+300")
 root.title("Elettro tools")
+
+############### LEGGE DI OHM##############################################
 
 def LeggeOhm():
     global top
@@ -102,6 +108,7 @@ def Calcola_OHM():
             myLabela.pack()
             myButtone['state'] = DISABLED
 
+################ CHIUDI & REINIZIA ########################################
 
 def restart():
     myLabela.destroy()
@@ -109,6 +116,12 @@ def restart():
     tensione.insert(0, "0")
     resistenza.insert(0, "0")
     myButtone['state'] = NORMAL
+
+def Destroy():
+    myLabel.destroy()
+    myButton['state'] = NORMAL
+
+################# CALCOLO WATT ###########################################
 
 def CalcoloWatt():
     global myLabel
@@ -122,13 +135,25 @@ def CalcoloWatt():
     myLabel.pack()
     myButton['state'] = DISABLED
 
-def Destroy():
-    myLabel.destroy()
-    myButton['state'] = NORMAL
+############ IMMAGINE RESISTENZE #####################################################
+
+def resistenze():
+    global my_img
+    top = Toplevel()
+    top.title("Resistenze")
+    top.geometry("850x500+380+200")
+    my_img = ImageTk.PhotoImage(Image.open("Resistenze.jpg"))
+    my_label = Label(top, image=my_img).pack()
+    bt2 = Button(top, text="close windows", command=top.destroy).pack()
+
+
+
 
 btn = Button(root, text="Calcolo del consumo in Watt", command = LeggeOhm).pack()
 btn2 = Button(root, text="Legge di Ohm", command = OHM).pack()
+btn4 = Button(root, text="Resistenze", command = resistenze).pack()
 btn3 = Button(root, text="Chiudi", command = root.destroy).pack()
+
 
 mainloop()
 
