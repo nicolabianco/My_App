@@ -1,0 +1,57 @@
+############### Nicola Bianco 26/05/2021 bianco.nicola@yahoo.it #########
+
+import requests
+import json
+
+
+url = requests.get("http://www.7timer.info/bin/api.pl?lon=08.33&lat=40.43&product=civil&output=json")
+text = url.text
+data = json.loads(text)
+user = data
+
+dataseries = user['dataseries']
+info =(dataseries[0]) #meteo attuale
+
+element = []
+for k in info.values():
+    element.append(k)
+
+##################################################################
+
+cloudcover = element[1]
+if cloudcover == 1:
+    cloudcover = "cielo sereno"
+if cloudcover == 2 or cloudcover <= 3:
+    cloudcover = "poco nuvoloso"
+if cloudcover == 4 or cloudcover == 5:
+    cloudcover = "moderatamente nuvoloso"
+if cloudcover == 6 or cloudcover == 7:
+    cloudcover = "molto nuvoloso"
+if cloudcover == 8 or cloudcover == 9:
+    cloudcover = "coperto"
+
+
+print("Nuvolosità: "+str(cloudcover))
+
+##################################################################
+
+temperatureat2meter = element[5]
+print("Temperatura a 2 metri sul livello del mare: "+str(temperatureat2meter))
+
+##################################################################
+
+weather = element[8]
+print("Condizioni meteo: "+ weather)
+
+#####################################################################
+
+wind10m = element[7]
+windinfo = []
+for info in wind10m.values():
+    windinfo.append(info)
+
+wind_direction = windinfo[0]
+wind_strenght = windinfo[1]
+
+print("Direzione del vento: "+str(wind_direction))
+print("Forza del vento: "+str(wind_strenght))
