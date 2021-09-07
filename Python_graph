@@ -1,0 +1,116 @@
+import matplotlib.pyplot as plt
+import mysql.connector
+import mysql
+import numpy as np
+
+
+mydb = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    passwd="XXXXXXXXX",
+    database="XXXXXXXXX"
+    )
+
+mycursor = mydb.cursor()
+
+
+# Totale male & female
+
+
+mycursor.execute("SELECT COUNT(answers) FROM Range_Qs WHERE sex = 'M'")
+male1 = mycursor.fetchone()
+total_male = male1[0]
+
+
+mycursor.execute("SELECT COUNT(answers) FROM Range_Qs WHERE sex = 'F'")
+female1 = mycursor.fetchone()
+total_female = female1[0]
+
+
+# Answer A
+
+mycursor.execute("SELECT COUNT(answers) FROM Range_Qs WHERE answers = 'A' AND sex = 'M'")
+male = mycursor.fetchone()
+male_A = male[0]
+
+mycursor.execute("SELECT COUNT(answers) FROM Range_Qs WHERE answers = 'A' AND sex = 'F'")
+female = mycursor.fetchone()
+female_A = female[0]
+
+# Answer B
+
+mycursor.execute("SELECT COUNT(answers) FROM Range_Qs WHERE answers = 'B' AND sex = 'M'")
+male = mycursor.fetchone()
+male_B = male[0]
+
+mycursor.execute("SELECT COUNT(answers) FROM Range_Qs WHERE answers = 'B' AND sex = 'F'")
+female = mycursor.fetchone()
+female_B = female[0]
+
+# Answer C
+
+mycursor.execute("SELECT COUNT(answers) FROM Range_Qs WHERE answers = 'C' AND sex = 'M'")
+male = mycursor.fetchone()
+male_C = male[0]
+
+mycursor.execute("SELECT COUNT(answers) FROM Range_Qs WHERE answers = 'C' AND sex = 'F'")
+female = mycursor.fetchone()
+female_C = female[0]
+
+# Answer D
+
+mycursor.execute("SELECT COUNT(answers) FROM Range_Qs WHERE answers = 'D' AND sex = 'M'")
+male = mycursor.fetchone()
+male_D = male[0]
+
+mycursor.execute("SELECT COUNT(answers) FROM Range_Qs WHERE answers = 'D' AND sex = 'F'")
+female = mycursor.fetchone()
+female_D = female[0]
+
+
+# Answer E
+
+mycursor.execute("SELECT COUNT(answers) FROM Range_Qs WHERE answers = 'E' AND sex = 'M'")
+male = mycursor.fetchone()
+male_E = male[0]
+
+mycursor.execute("SELECT COUNT(answers) FROM Range_Qs WHERE answers = 'E' AND sex = 'F'")
+female = mycursor.fetchone()
+female_E = female[0]
+
+
+
+
+category_names = ["it's the same", "slightly different", "a bit different", "quite different", "totally different"]
+
+results = {
+            'Males, '+ str(total_male): [male_A, male_B, male_C, male_D, male_E],
+            'Females, '+ str(total_female): [female_A, female_B, female_C, female_D, female_E]
+    }
+
+def survey(results, category_names):
+    labels = list(results.keys())
+    data = np.array(list(results.values()))
+    data_cum = data.cumsum(axis=1)
+    category_colors = plt.get_cmap('RdYlGn')(
+        np.linspace(0.09, 0.90, data.shape[1]))
+    fig, ax = plt.subplots(figsize=(9.2, 5))
+    ax.invert_yaxis()
+    ax.xaxis.set_visible(False)
+    ax.set_xlim(0, np.sum(data, axis=1).max())
+
+    for i, (colname, color) in enumerate(zip(category_names, category_colors)):
+        widths = data[:, i]
+        starts = data_cum[:, i] - widths
+        rects = ax.barh(labels, widths, left=starts, height=0.5,
+                        label=colname, color=color)
+        r, g, b, _ = color
+        text_color = 'white' if r * g * b < 0.5 else 'darkgrey'
+        ax.bar_label(rects, label_type='center', color=text_color)
+        ax.set_title('Scores by gender')
+    ax.legend(ncol=len(category_names), #bbox_to_anchor=(0, 1),
+              loc='lower left', fontsize='small')
+    return fig, ax
+
+survey(results, category_names)
+plt.show()
