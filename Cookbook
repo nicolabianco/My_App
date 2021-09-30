@@ -1,0 +1,101 @@
+########### 10/07/2021 Nicola Bianco bianco.nicola@yahoo.it ###########
+
+import mysql
+import mysql.connector
+
+mydb = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    passwd="XXXXXX",
+    database="cucina"
+    )
+
+mycursor = mydb.cursor()
+
+while True:
+    print("Istruzioni:" + "\n" + "Premere 0 per visualizzare le ricette, 1 per aggiungere una ricetta, 2 per selezionare una ricetta, 3 per aggiornare una ricetta, 4 per cancellare una ricetta, 5 per uscire")
+    scelta = input("fare una scelta ")
+
+# VISUALIZZARE TUTTE LE RICETTE
+
+    if scelta == '0':
+        mycursor.execute("SELECT * from ricette")
+        for x in mycursor:
+            print(x)
+
+# AGGIUNGERE UNA RICETTA
+
+    if scelta == '1':
+        nome = input("inserire il nome della ricetta ")
+        ingredienti = input("inserire gli ingredienti ")
+        preparazione = input ("inserire la preparazione ")
+        mySql_insert_query = ("INSERT into ricette (nome, ingredienti, preparazione)" 
+        "VALUES (%s, %s, %s)")
+        data = (nome, ingredienti, preparazione)
+        mycursor.execute(mySql_insert_query, data)
+        mydb.commit()
+
+# SELEZIONARE UNA RICETTA
+
+    if scelta == '2':
+        nome_ricetta = input("inserire il nome della ricetta ")
+        query = "SELECT * from ricette WHERE nome = %s"
+        nome = (nome_ricetta,)
+        mycursor.execute(query,nome)
+        ricetta = mycursor.fetchone()
+        print(ricetta)
+
+# AGGIORNARE RICETTA
+    if scelta == '3':
+
+        while True:
+            print("Premere 1 per aggiornare il nome di una ricetta, 2 per aggiornare gli ingredienti di una ricetta, premi 3 per aggiornare la preparazione di una ricetta, 4 per tornare al menu principale")
+            scelta2 = input()
+
+            if scelta2 == '1':
+                vecchioNome = input("inserire il vecchio nome ")
+                nuovoNome = input("inserire il nuovo nome ")
+                query = "UPDATE ricette SET nome = %s WHERE nome = %s"
+                datiAggiornamento = (nuovoNome,vecchioNome)
+                mycursor.execute(query,datiAggiornamento)
+                mydb.commit()
+                continue
+
+            if scelta2 == '2':
+                nuoviIngredienti = input("inserire i nuovi ingredienti ")
+                nomeRicetta = input("inserire il nome della ricetta ")
+                query = "UPDATE ricette SET ingredienti = %s WHERE nome = %s"
+                datiAggiornamento = (nuoviIngredienti, nomeRicetta)
+                mycursor.execute(query, datiAggiornamento)
+                mydb.commit()
+                continue
+
+            if scelta2 == '3':
+                nuovaPreparazione = input("inserire la nuova preparazione ")
+                nomeRicetta = input("inserire il nome della ricetta ")
+                query = "UPDATE ricette SET preparazione = %s WHERE nome = %s"
+                datiAggiornamento = (nuovaPreparazione, nomeRicetta)
+                mycursor.execute(query, datiAggiornamento)
+                mydb.commit()
+                continue
+
+            if scelta2 == '4':
+                break
+
+
+# ELIMINARE RICETTA
+
+    if scelta == '4':
+        cancellaRicetta = input("Inserire il nome della ricetta da eliminare ")
+        query = "DELETE from ricette WHERE nome = %s"
+        datiAggiornamento = (cancellaRicetta,)
+        mycursor.execute(query, datiAggiornamento)
+        mydb.commit()
+        continue
+
+# USCIRE DAL RICETTARIO
+
+    if scelta == '5':
+        print("Grazie per aver usato il ricettario, ci vediamo presto! ")
+        mydb.close()
+        break
